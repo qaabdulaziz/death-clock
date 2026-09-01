@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="A life-in-months grid with a financial feasibility engine for project planning.">
+  <title>Death Clock</title>
+  <link rel="stylesheet" href="/static/styles.css">
+  <script src="/static/app.js" defer></script>
+</head>
+<body>
+  <div id="setup-view" class="setup-shell" hidden>
+    <section class="setup-card" aria-labelledby="setup-title">
+      <div class="eyebrow">Welcome</div>
+      <h1 id="setup-title">Map time to possibility.</h1>
+      <p class="lede">Set a few assumptions to build your life-in-months view. Everything remains editable.</p>
+      <form id="setup-form" class="setup-form">
+        <label>
+          <span>Date of birth</span>
+          <input name="date_of_birth" type="date" required>
+        </label>
+        <label>
+          <span>Life expectancy in years</span>
+          <input name="life_expectancy_years" type="number" min="0.1" max="150" step="0.1" value="80" required>
+          <small>A personal assumption—use any source you trust, such as statistics, actuarial tables, or your own judgement.</small>
+        </label>
+        <label>
+          <span>Currency code</span>
+          <input name="currency" type="text" minlength="3" maxlength="3" value="USD" autocapitalize="characters" required>
+          <small>Used only as a display label.</small>
+        </label>
+        <div class="field-pair">
+          <label>
+            <span>Starting balance</span>
+            <input name="starting_balance" type="number" min="0" max="1000000000000000" step="0.01" value="0" required>
+          </label>
+          <label>
+            <span>Monthly contribution</span>
+            <input name="monthly_contribution" type="number" min="0" max="1000000000000000" step="0.01" value="0" required>
+          </label>
+        </div>
+        <label>
+          <span>Annual return rate (%)</span>
+          <input name="annual_return_rate" type="number" min="-100" max="100" step="0.1" value="7" required>
+        </label>
+        <button class="primary-button" type="submit">Create my grid</button>
+        <p id="setup-error" class="form-message" role="alert"></p>
+      </form>
+    </section>
+  </div>
+
+  <div id="main-view" hidden>
+    <header class="app-header">
+      <div>
+        <div class="eyebrow">Life × finance</div>
+        <h1>Death Clock</h1>
+      </div>
+      <p class="header-summary" id="header-summary">Your time, rendered in months.</p>
+    </header>
+
+    <main class="app-layout">
+      <aside class="panel settings-panel">
+        <div class="panel-heading">
+          <div><span class="section-index">01</span><h2>Assumptions</h2></div>
+          <span id="save-status" class="save-status" aria-live="polite">Saved</span>
+        </div>
+        <form id="settings-form" class="settings-form">
+          <label><span>Date of birth</span><input name="date_of_birth" type="date" required></label>
+          <label>
+            <span>Life expectancy</span>
+            <div class="input-with-unit"><input name="life_expectancy_years" type="number" min="0.1" max="150" step="0.1" required><b>years</b></div>
+            <small>Set this personal assumption from any source you trust.</small>
+          </label>
+          <label><span>Currency code</span><input name="currency" type="text" minlength="3" maxlength="3" required></label>
+          <label><span>Starting balance</span><input name="starting_balance" type="number" min="0" max="1000000000000000" step="0.01" required></label>
+          <div class="tactile-field">
+            <div class="field-label"><span>Monthly contribution</span><output id="contribution-output"></output></div>
+            <input id="contribution-range" type="range" min="0" max="10000" step="25">
+            <input name="monthly_contribution" type="number" min="0" max="1000000000000000" step="0.01" required aria-label="Monthly contribution amount">
+          </div>
+          <div class="tactile-field">
+            <div class="field-label"><span>Annual return</span><output id="return-output"></output></div>
+            <input id="return-range" type="range" min="-25" max="30" step="0.1">
+            <div class="input-with-unit"><input name="annual_return_rate" type="number" min="-100" max="100" step="0.1" required aria-label="Annual return rate"><b>%</b></div>
+          </div>
+        </form>
+        <button id="reset-data" class="text-button" type="button">Reset all data</button>
+      </aside>
+
+      <section class="workspace">
+        <section class="panel grid-panel" aria-labelledby="grid-heading">
+          <div class="panel-heading grid-heading-row">
+            <div><span class="section-index">02</span><h2 id="grid-heading">Life in months</h2></div>
+            <div class="legend" aria-label="Grid legend">
+              <span><i class="legend-swatch lived"></i>Lived</span>
+              <span><i class="legend-swatch future"></i>Remaining</span>
+              <span><i class="legend-swatch current"></i>You are here</span>
+              <span><i class="legend-dot"></i>Project</span>
+            </div>
+          </div>
+          <div id="grid-summary" class="grid-summary"></div>
+          <div id="life-grid" class="life-grid" aria-live="polite"></div>
+        </section>
+
+        <section class="panel projects-panel" aria-labelledby="projects-heading">
+          <div class="panel-heading">
+            <div><span class="section-index">03</span><h2 id="projects-heading">Projects</h2></div>
+          </div>
+          <form id="add-project-form" class="add-project-form">
+            <label><span>Project name</span><input name="name" type="text" maxlength="200" placeholder="What do you want to make possible?" required></label>
+            <label><span>Cost</span><input name="cost" type="number" min="0" max="1000000000000000" step="0.01" placeholder="0" required></label>
+            <button class="primary-button compact" type="submit">Add project</button>
+          </form>
+          <div id="projects-list" class="projects-list"></div>
+        </section>
+      </section>
+    </main>
+  </div>
+
+  <dialog id="month-popover" class="month-popover">
+    <button class="dialog-close" type="button" aria-label="Close">×</button>
+    <div id="month-popover-content"></div>
+  </dialog>
+
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+</body>
+</html>

@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="720" viewBox="0 0 1280 720" role="img" aria-labelledby="title desc">
+  <title id="title">Death Clock screenshot placeholder</title>
+  <desc id="desc">A neutral placeholder for a future application screenshot.</desc>
+  <rect width="1280" height="720" rx="24" fill="#f4f6f8"/>
+  <rect x="40" y="40" width="1200" height="640" rx="18" fill="#ffffff" stroke="#dce3ea" stroke-width="2"/>
+  <circle cx="640" cy="322" r="40" fill="#e8f1f8" stroke="#4778a9" stroke-width="3"/>
+  <path d="M640 298v28l18 12" fill="none" stroke="#315f8e" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+  <text x="640" y="405" text-anchor="middle" font-family="system-ui, sans-serif" font-size="28" font-weight="600" fill="#172033">Application screenshot</text>
+  <text x="640" y="445" text-anchor="middle" font-family="system-ui, sans-serif" font-size="18" fill="#667085">Replace this placeholder with an up-to-date interface capture.</text>
+</svg>
